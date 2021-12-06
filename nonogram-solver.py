@@ -1,3 +1,4 @@
+from collections import deque
 from string import whitespace
 
 """
@@ -22,6 +23,7 @@ class Nonogram(object):
         self.__colors = colors
         self.__lines = lines_matrix
         self.__columns = columns_matrix
+        self.__solution = [['.' for _ in range(len(self.__columns))] for _ in range(len(self.__lines))]
         self.__check_correctness()
 
     def __check_correctness(self):
@@ -33,6 +35,54 @@ class Nonogram(object):
         for column in self.__columns:
             if min_len(column) > column_len:
                 raise Exception('Incorrect input: column is longer, than can be')
+
+    def solve(self):
+        queue = deque()
+        for i in range(len(self.__lines)):
+            if min_len(self.__lines[i]) == len(self.__columns):
+                self.__fill_line(i)
+            else:
+                queue.append(('l', i))
+        for i in range(len(self.__columns)):
+            if min_len(self.__columns[i]) == len(self.__lines):
+                self.__fill_column(i)
+            else:
+                queue.append(('c', i))
+        while queue:
+            current = queue.popleft()
+            changed = self.__solve_line(current[1]) if current[0] == 'l' else self.__solve_column(current[1])
+            queue.extend(changed)
+        return self.__solution
+
+    def __fill_line(self, line_number):
+        filled = 0
+        for index in range(len(self.__lines[line_number])):
+            if index > 0 and self.__lines[line_number][index - 1][0] == self.__lines[line_number][index][0]:
+                self.__solution[line_number][filled] = '-'
+                filled += 1
+            for i in range(self.__lines[line_number][index][1]):
+                self.__solution[line_number][filled + i] = self.__lines[line_number][index][0]
+            filled += self.__lines[line_number][index][1]
+
+    def __fill_column(self, column_number):
+        filled = 0
+        for index in range(len(self.__columns[column_number])):
+            if index > 0 and self.__columns[column_number][index - 1][0] == self.__columns[column_number][index][0]:
+                self.__solution[filled][column_number] = '-'
+                filled += 1
+            for i in range(self.__columns[column_number][index][1]):
+                self.__solution[filled + i][column_number] = self.__columns[column_number][index][0]
+            filled += self.__columns[column_number][index][1]
+
+    def __solve_line(self, line_number):
+        changed_columns = []
+        # solving methods
+        return changed_columns
+
+    def __solve_column(self, column_number):
+        changed_lines = []
+        # solving methods
+        return changed_lines
 
 
 def min_len(line):
