@@ -17,6 +17,37 @@ columns:
 """
 
 
+def fill(info_line, length):
+    left_line = [['.', 0] for _ in range(length)]
+    right_line = [['.', 0] for _ in range(length)]
+    filled = ['.' for _ in range(length)]
+    blocks_number = len(info_line)
+    current_left = 0
+    current_right = 0
+    for i in range(blocks_number):
+        if i > 0:
+            if info_line[i - 1][0] == info_line[i][0]:
+                left_line[current_left] = ['-', 1]
+                current_left += 1
+            if info_line[blocks_number - i][0] == info_line[blocks_number - i - 1][0]:
+                right_line[length - current_right - 1] = ['-', -1]
+                current_right += 1
+        for j in range(info_line[i][1]):
+            left_line[current_left + j] = [info_line[i][0], i]
+        for k in range(info_line[blocks_number - i - 1][1]):
+            right_line[length - current_right - 1 - k] = [info_line[blocks_number - i - 1][0], blocks_number - i - 1]
+        current_left += info_line[i][1]
+        current_right += info_line[blocks_number - i - 1][1]
+    if current_left == length:
+        for i in range(length):
+            filled[i] = left_line[i][0]
+    else:
+        for i in range(length):
+            if left_line[i] == right_line[i]:
+                filled[i] = left_line[i][0]
+    return filled
+
+
 class Nonogram(object):
 
     def __init__(self, colors, lines_matrix, columns_matrix):
@@ -39,14 +70,12 @@ class Nonogram(object):
     def solve(self):
         queue = deque()
         for i in range(len(self.__lines)):
-            if min_len(self.__lines[i]) == len(self.__columns):
-                self.__fill_line(i)
-            else:
+            self.__fill_line(i)
+            if min_len(self.__lines[i]) != len(self.__columns):
                 queue.append(('l', i))
         for i in range(len(self.__columns)):
-            if min_len(self.__columns[i]) == len(self.__lines):
-                self.__fill_column(i)
-            else:
+            self.__fill_column(i)
+            if min_len(self.__columns[i]) != len(self.__lines):
                 queue.append(('c', i))
         while queue:
             current = queue.popleft()
@@ -55,24 +84,16 @@ class Nonogram(object):
         return self.__solution
 
     def __fill_line(self, line_number):
-        filled = 0
-        for index in range(len(self.__lines[line_number])):
-            if index > 0 and self.__lines[line_number][index - 1][0] == self.__lines[line_number][index][0]:
-                self.__solution[line_number][filled] = '-'
-                filled += 1
-            for i in range(self.__lines[line_number][index][1]):
-                self.__solution[line_number][filled + i] = self.__lines[line_number][index][0]
-            filled += self.__lines[line_number][index][1]
+        filled_line = fill(self.__lines[line_number], len(self.__columns))
+        for i in range(len(self.__columns)):
+            if filled_line[i] != '.':
+                self.__solution[line_number][i] = filled_line[i]
 
     def __fill_column(self, column_number):
-        filled = 0
-        for index in range(len(self.__columns[column_number])):
-            if index > 0 and self.__columns[column_number][index - 1][0] == self.__columns[column_number][index][0]:
-                self.__solution[filled][column_number] = '-'
-                filled += 1
-            for i in range(self.__columns[column_number][index][1]):
-                self.__solution[filled + i][column_number] = self.__columns[column_number][index][0]
-            filled += self.__columns[column_number][index][1]
+        filled_column = fill(self.__columns[column_number], len(self.__lines))
+        for i in range(len(self.__lines)):
+            if filled_column[i] != '.':
+                self.__solution[i][column_number] = filled_column[i]
 
     def __solve_line(self, line_number):
         changed_columns = []
