@@ -88,9 +88,49 @@ def fill(current_line, info_line):
     return changed
 
 
+def repulsion_from_walls(current_line, info_line):
+    changed = False
+    flag_left = False
+    length_left = 0
+    for i in range(info_line.get_block(0).length):
+        if flag_left:
+            length_left += 1
+            if current_line[i] == '.':
+                current_line[i] = info_line.get_block(0).color
+                changed = True
+        elif current_line[i] == info_line.get_block(0).color:
+            flag_left = True
+            length_left += 1
+    if length_left == info_line.get_block(0).length:
+        info_line.paint_block(0)
+        if len(info_line) > 1 and info_line.get_block(0).color == info_line.get_block(1).color \
+                and current_line[length_left] != '-':
+            current_line[length_left] = '-'
+            changed = True
+    flag_right = False
+    length_right = 0
+    for i in range(info_line.get_block(-1).length):
+        if flag_right:
+            length_right += 1
+            if current_line[len(current_line) - i - 1] == '.':
+                current_line[len(current_line) - i - 1] = info_line.get_block(-1).color
+                changed = True
+        elif current_line[len(current_line) - i - 1] == info_line.get_block(-1).color:
+            flag_right = True
+            length_right += 1
+    if length_right == info_line.get_block(-1).length:
+        info_line.paint_block(-1)
+        if len(info_line) > 1 and info_line.get_block(len(info_line) - 2).color == info_line.get_block(-1).color \
+                and current_line[len(current_line) - length_right - 1] != '-':
+            current_line[len(current_line) - length_right - 1] = '-'
+            changed = True
+    return changed
+
+
 def solve_line(current_line, info_line):
     changed = False
     changed = fill(current_line, info_line) or changed
+    changed = repulsion_from_walls(current_line, info_line) or changed
     return changed
 
 
