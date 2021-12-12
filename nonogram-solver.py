@@ -18,35 +18,80 @@ columns:
 """
 
 
-def fill(info_line, length):
+class InfoBlock(object):
+    def __init__(self, length, color):
+        self.length = length
+        self.color = color
+        self.is_painted = False
+
+
+class InfoLine(object):
+    def __init__(self):
+        self.__blocks = []
+        self.is_full = False
+
+    def __len__(self):
+        return len(self.__blocks)
+
+    def __check_fullness(self):
+        fullness = True
+        for block in self.__blocks:
+            fullness = fullness and block.is_painted
+        self.is_full = fullness
+
+    def add_block(self, block):
+        self.__blocks.append(block)
+
+    def paint_block(self, block_number):
+        if not self.__blocks[block_number].is_painted:
+            self.__blocks[block_number].is_painted = True
+            self.__check_fullness()
+
+    def get_block(self, block_number):
+        return self.__blocks[block_number]
+
+
+def fill(current_line, info_line):
+    length = len(current_line)
     left_line = [['.', 0] for _ in range(length)]
     right_line = [['.', 0] for _ in range(length)]
-    filled = ['.' for _ in range(length)]
     blocks_number = len(info_line)
     current_left = 0
     current_right = 0
     for i in range(blocks_number):
         if i > 0:
-            if info_line[i - 1][0] == info_line[i][0]:
+            if info_line.get_block(i - 1).color == info_line.get_block(i).color:
                 left_line[current_left] = ['-', 1]
                 current_left += 1
-            if info_line[blocks_number - i][0] == info_line[blocks_number - i - 1][0]:
+            if info_line.get_block(blocks_number - i).color == info_line.get_block(blocks_number - i - 1).color:
                 right_line[length - current_right - 1] = ['-', -1]
                 current_right += 1
-        for j in range(info_line[i][1]):
-            left_line[current_left + j] = [info_line[i][0], i]
-        for k in range(info_line[blocks_number - i - 1][1]):
-            right_line[length - current_right - 1 - k] = [info_line[blocks_number - i - 1][0], blocks_number - i - 1]
-        current_left += info_line[i][1]
-        current_right += info_line[blocks_number - i - 1][1]
+        for j in range(info_line.get_block(i).length):
+            left_line[current_left + j] = [info_line.get_block(i).color, i]
+        for k in range(info_line.get_block(blocks_number - i - 1).length):
+            right_line[length - current_right - 1 - k] = [info_line.get_block(blocks_number - i - 1).color,
+                                                          blocks_number - i - 1]
+        current_left += info_line.get_block(i).length
+        current_right += info_line.get_block(blocks_number - i - 1).length
+    changed = False
     if current_left == length:
+        for i in range(len(info_line)):
+            info_line.paint_block(i)
         for i in range(length):
-            filled[i] = left_line[i][0]
+            current_line[i] = left_line[i][0]
+            changed = True
     else:
         for i in range(length):
-            if left_line[i] == right_line[i]:
-                filled[i] = left_line[i][0]
-    return filled
+            if left_line[i] == right_line[i] and left_line[i][0] != '.' and current_line[i] == '.':
+                current_line[i] = left_line[i][0]
+                changed = True
+    return changed
+
+
+def solve_line(current_line, info_line):
+    changed = False
+    changed = fill(current_line, info_line) or changed
+    return changed
 
 
 class Nonogram(object):
@@ -69,57 +114,70 @@ class Nonogram(object):
                 raise Exception('Incorrect input: column is longer, than can be')
 
     def solve(self):
-        queue = deque()
-        for i in range(len(self.__lines)):
-            self.__fill_line(i)
-            if min_len(self.__lines[i]) != len(self.__columns):
-                queue.append(('l', i))
-        for i in range(len(self.__columns)):
-            self.__fill_column(i)
-            if min_len(self.__columns[i]) != len(self.__lines):
-                queue.append(('c', i))
-        while queue:
-            current = queue.popleft()
-            changed = self.__solve_line(current[1]) if current[0] == 'l' else self.__solve_column(current[1])
-            queue.extend(changed)
+        solution_changed = True
+        while solution_changed:
+            solution_changed = False
+            for i in range(len(self.__lines)):
+                if self.__solve_line(i):
+                    solution_changed = True
+            for i in range(len(self.__columns)):
+                if self.__solve_column(i):
+                    solution_changed = True
         return self.__solution
 
-    def __fill_line(self, line_number):
-        filled_line = fill(self.__lines[line_number], len(self.__columns))
-        for i in range(len(self.__columns)):
-            if filled_line[i] != '.':
-                self.__solution[line_number][i] = filled_line[i]
-
-    def __fill_column(self, column_number):
-        filled_column = fill(self.__columns[column_number], len(self.__lines))
-        for i in range(len(self.__lines)):
-            if filled_column[i] != '.':
-                self.__solution[i][column_number] = filled_column[i]
-
     def __solve_line(self, line_number):
-        changed_columns = []
-        # solving methods
-        return changed_columns
+        if self.__lines[line_number].is_full:
+            return False
+        current_line = self.__solution[line_number]
+        left, right = 0, len(current_line) - 1
+        for i in range(len(current_line)):
+            if current_line[i] != '-':
+                left = i
+                break
+        for i in range(len(current_line) - 1, -1, -1):
+            if current_line[i] != '-':
+                right = i
+                break
+        current_line = current_line[left:right + 1]
+        was_changed = solve_line(current_line, self.__lines[line_number])
+        for i in range(left, right + 1):
+            self.__solution[line_number][i] = current_line[i - left]
+        return was_changed
 
     def __solve_column(self, column_number):
-        changed_lines = []
-        # solving methods
-        return changed_lines
+        if self.__columns[column_number].is_full:
+            return False
+        current_column = [self.__solution[i][column_number] for i in range(len(self.__lines))]
+        up, down = 0, len(current_column) - 1
+        for i in range(len(current_column)):
+            if current_column[i] != '-':
+                up = i
+                break
+        for i in range(len(current_column) - 1, -1, -1):
+            if current_column[i] != '-':
+                down = i
+                break
+        current_column = current_column[up:down + 1]
+        was_changed = solve_line(current_column, self.__columns[column_number])
+        for i in range(up, down + 1):
+            self.__solution[i][column_number] = current_column[i - up]
+        return was_changed
 
 
 def min_len(line):
     minimum_len = 0
     for index in range(len(line)):
         if index == 0:
-            minimum_len += line[index][1]
+            minimum_len += line.get_block(index).length
         else:
-            minimum_len += line[index][1] + 1 if line[index][0] == line[index - 1][0] else line[index][1]
+            minimum_len += line.get_block(index).length + 1 \
+                if line.get_block(index).color == line.get_block(index - 1).color else line.get_block(index).length
     return minimum_len
 
 
 def line_transformer(line, colors):
     words_in_line = line.split()
-    elements = []
+    info_line = InfoLine()
     if len(words_in_line) > 0:
         for word in words_in_line:
             index = 0
@@ -130,8 +188,8 @@ def line_transformer(line, colors):
                     break
             if index >= len(word) or word[index:] not in colors:
                 raise Exception('Incorrect input: no such color \'{0}\''.format(word[index:]))
-            elements.append((word[index:], int(word[:index])))
-    return elements
+            info_line.add_block(InfoBlock(int(word[:index]), word[index:]))
+    return info_line
 
 
 def file_reader(path_to_file):
