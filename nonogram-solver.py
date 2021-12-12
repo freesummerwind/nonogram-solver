@@ -188,11 +188,40 @@ def empties_from_walls(current_line, info_line):
     return changed
 
 
+def line_fullness_check(current_line, info_line):
+    current_index = 0
+    current_block = 0
+    while current_index < len(current_line):
+        if current_line[current_index] == '.' or current_line[current_index] == '-':
+            current_index += 1
+        elif current_line[current_index] != info_line.get_block(current_block).color:
+            return False
+        else:
+            for i in range(info_line.get_block(current_block).length):
+                if current_index + i >= len(current_line):
+                    return False
+                if current_line[current_index + i] != info_line.get_block(current_block).color:
+                    return False
+            current_index += info_line.get_block(current_block).length
+            current_block += 1
+    if current_block != len(info_line):
+        return False
+    changed = False
+    for i in range(len(current_line)):
+        if current_line[i] == '.':
+            current_line[i] = '-'
+            changed = True
+    for i in range(len(info_line)):
+        info_line.paint_block(i)
+    return changed
+
+
 def solve_line(current_line, info_line):
     changed = False
     changed = fill(current_line, info_line) or changed
     changed = repulsion_from_walls(current_line, info_line) or changed
     changed = empties_from_walls(current_line, info_line) or changed
+    changed = line_fullness_check(current_line, info_line) or changed
     return changed
 
 
