@@ -127,10 +127,72 @@ def repulsion_from_walls(current_line, info_line):
     return changed
 
 
+def empties_from_walls(current_line, info_line):
+    if info_line.is_full:
+        return False
+    current_empties = 0
+    current_block = 0
+    last_space = 0
+    changed = False
+    index = 0
+    while index < len(current_line):
+        if current_line[index] == '.':
+            current_empties += 1
+            index += 1
+        elif current_line[index] == '-' and current_empties < info_line.get_block(current_block).length:
+            for j in range(last_space, index):
+                if current_line[j] != '-':
+                    current_line[j] = '-'
+                    changed = True
+            last_space = index
+            current_empties = 0
+            index += 1
+        elif current_line[index] != '-' and info_line.get_block(current_block).is_painted:
+            for j in range(last_space, index):
+                if current_line[j] == '.':
+                    current_line[j] = '-'
+                    changed = True
+            index += info_line.get_block(current_block).length
+            current_block += 1
+            current_empties = 0
+            last_space = index
+        else:
+            break
+    current_empties = 0
+    current_block = len(info_line) - 1
+    last_space = len(current_line)
+    index = len(current_line) - 1
+    while index > -1:
+        if current_line[index] == '.':
+            current_empties += 1
+            index -= 1
+        elif current_line[index] == '-' and current_empties < info_line.get_block(current_block).length:
+            for j in range(index, last_space):
+                if current_line[j] != '-':
+                    current_line[j] = '-'
+                    changed = True
+            last_space = index
+            current_empties = 0
+            index -= 1
+        elif current_line[index] != '-' and info_line.get_block(current_block).is_painted:
+            for j in range(index, last_space):
+                if current_line[j] == '.':
+                    current_line[j] = '-'
+                    changed = True
+            index -= info_line.get_block(current_block).length
+            current_block -= 1
+            current_empties = 0
+            last_space = index + 1
+        else:
+            break
+    return changed
+
+
 def solve_line(current_line, info_line):
     changed = False
     changed = fill(current_line, info_line) or changed
     changed = repulsion_from_walls(current_line, info_line) or changed
+    changed = empties_from_walls(current_line, info_line) or changed
     return changed
 
 
