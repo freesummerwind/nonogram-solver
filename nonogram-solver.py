@@ -1,3 +1,4 @@
+import argparse
 from collections import deque
 from string import whitespace
 
@@ -157,3 +158,19 @@ def file_reader(path_to_file):
             else:
                 columns.append(line_transformer(line, colors))
     return Nonogram(colors, lines, columns)
+
+
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser(description='Files for input and output')
+    parser.add_argument('input_file', type=str, help='name of file with numbers')
+    parser.add_argument('-s', type=str, default=None, help='name of file with result')
+    arguments = parser.parse_args()
+    nonogram = file_reader(arguments.input_file)
+    solution = nonogram.solve()
+    if arguments.s is None:
+        for line in solution:
+            print(*line)
+    else:
+        with open(arguments.s, 'w') as f_out:
+            for line in solution:
+                f_out.write(' '.join(line) + '\n')
