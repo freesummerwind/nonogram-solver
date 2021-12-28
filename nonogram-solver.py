@@ -47,10 +47,11 @@ class Nonogram(object):
     def solve(self):
         queue = deque()
         in_queue = set()
-        for i in range(10):
+        for i in range(len(self.__lines_info)):
             queue.append(('l', i))
-            queue.append(('c', i))
             in_queue.add(('l', i))
+        for i in range(len(self.__columns_info)):
+            queue.append(('c', i))
             in_queue.add(('c', i))
         while queue:
             current_element = queue.popleft()
