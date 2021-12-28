@@ -15,6 +15,79 @@ def no_colored(line, current, length):
     return True
 
 
+class Nonogram(object):
+
+    def __init__(self, colors, lines_info, columns_info):
+        self.__nonogram = [['.' for _ in range(len(columns_info))] for __ in range(len(lines_info))]
+        self.__lines_info = lines_info
+        self.__columns_info = columns_info
+        self.__colors = colors
+        self.__can_be_colored = []
+
+    def __solve_line(self, line, start, blocks_info):
+        flag = False
+        if len(blocks_info) == 0:
+            if no_colored(line, start, len(line) - start):
+                flag = True
+                for i in range(start, len(line)):
+                    self.__can_be_colored[i].add('-')
+        else:
+            for i in range(start, len(line) - blocks_info[0][1] + 1):
+                if no_colored(line, start, i - start) and no_empties(line, i, blocks_info[0][1]) \
+                        and (i == len(line) - blocks_info[0][1] or no_colored(line, i + blocks_info[0][1], 1)) \
+                        and self.__solve_line(line, i + blocks_info[0][1] + 1, blocks_info[1:]):
+                    flag = True
+                    for j in range(start, i + blocks_info[0][1] + int(i < len(line) - blocks_info[0][1])):
+                        if i <= j < i + blocks_info[0][1]:
+                            self.__can_be_colored[j].add('b')
+                        else:
+                            self.__can_be_colored[j].add('-')
+        return flag
+
+    def solve(self):
+        queue = deque()
+        in_queue = set()
+        for i in range(10):
+            queue.append(('l', i))
+            queue.append(('c', i))
+            in_queue.add(('l', i))
+            in_queue.add(('c', i))
+        while queue:
+            current_element = queue.popleft()
+            in_queue.remove(current_element)
+            if current_element[0] == 'l':  # line
+                line = self.__nonogram[current_element[1]]
+                self.__can_be_colored = [set() for _ in range(len(line))]
+                self.__solve_line(line, 0, self.__lines_info[current_element[1]])
+                for i in range(len(line)):
+                    if len(self.__can_be_colored[i]) == 0:
+                        raise ValueError('Error')
+                    elif len(self.__can_be_colored[i]) == 1 and self.__nonogram[current_element[1]][i] == '.':
+                        self.__nonogram[current_element[1]][i] = list(self.__can_be_colored[i])[0]
+                        if ('c', i) not in in_queue:
+                            queue.append(('c', i))
+                            in_queue.add(('c', i))
+            elif current_element[0] == 'c':  # column
+                column = [self.__nonogram[i][current_element[1]] for i in range(len(self.__nonogram))]
+                self.__can_be_colored = [set() for _ in range(len(column))]
+                self.__solve_line(column, 0, self.__columns_info[current_element[1]])
+                for i in range(len(column)):
+                    if len(self.__can_be_colored[i]) == 0:
+                        raise ValueError('Error')
+                    elif len(self.__can_be_colored[i]) == 1 and self.__nonogram[i][current_element[1]] == '.':
+                        self.__nonogram[i][current_element[1]] = list(self.__can_be_colored[i])[0]
+                        if ('l', i) not in in_queue:
+                            queue.append(('l', i))
+                            in_queue.add(('l', i))
+            else:
+                raise ValueError('Error')
+
+    def __str__(self):
+        result = ''
+        for line in self.__nonogram:
+            result += ' '.join(line) + '\n'
+        return result
+
 
 def line_transformer(line, colors):
     words_in_line = line.split()
