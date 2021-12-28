@@ -1,3 +1,19 @@
+from collections import deque
+from string import whitespace
+
+def no_empties(line, current, length):
+    for i in range(length):
+        if line[current + i] == '-':
+            return False
+    return True
+
+
+def no_colored(line, current, length):
+    for i in range(length):
+        if line[current + i] != '-' and line[current + i] != '.':
+            return False
+    return True
+
 
 
 def line_transformer(line, colors):
