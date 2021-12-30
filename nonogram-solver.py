@@ -1,6 +1,7 @@
 from collections import deque
 from string import whitespace
 
+
 def no_empties(line, current, length):
     for i in range(length):
         if line[current + i] == '-':
@@ -23,8 +24,9 @@ class Nonogram(object):
         self.__columns_info = columns_info
         self.__colors = colors
         self.__can_be_colored = []
+        self.__evaluated_positions = []
 
-    def __solve_line(self, line, start, blocks_info):
+    def __solve_line(self, line, start, blocks_info, current_block):
         flag = False
         if len(blocks_info) == 0:
             if no_colored(line, start, len(line) - start):
@@ -33,9 +35,16 @@ class Nonogram(object):
                     self.__can_be_colored[i].add('-')
         else:
             for i in range(start, len(line) - blocks_info[0][1] + 1):
-                if no_colored(line, start, i - start) and no_empties(line, i, blocks_info[0][1]) \
-                        and (i == len(line) - blocks_info[0][1] or no_colored(line, i + blocks_info[0][1], 1)) \
-                        and self.__solve_line(line, i + blocks_info[0][1] + 1, blocks_info[1:]):
+                if not no_colored(line, start, i - start):
+                    break
+                if self.__evaluated_positions[i][current_block] is None:
+                    if no_empties(line, i, blocks_info[0][1]) \
+                            and (i == len(line) - blocks_info[0][1] or no_colored(line, i + blocks_info[0][1], 1)) \
+                            and self.__solve_line(line, i + blocks_info[0][1] + 1, blocks_info[1:], current_block + 1):
+                        self.__evaluated_positions[i][current_block] = True
+                    else:
+                        self.__evaluated_positions[i][current_block] = False
+                if self.__evaluated_positions[i][current_block]:
                     flag = True
                     for j in range(start, i + blocks_info[0][1] + int(i < len(line) - blocks_info[0][1])):
                         if i <= j < i + blocks_info[0][1]:
@@ -59,7 +68,9 @@ class Nonogram(object):
             if current_element[0] == 'l':  # line
                 line = self.__nonogram[current_element[1]]
                 self.__can_be_colored = [set() for _ in range(len(line))]
-                self.__solve_line(line, 0, self.__lines_info[current_element[1]])
+                self.__evaluated_positions = [[None for _ in range(len(self.__lines_info[current_element[1]]))]
+                                              for __ in range(len(line))]
+                self.__solve_line(line, 0, self.__lines_info[current_element[1]], 0)
                 for i in range(len(line)):
                     if len(self.__can_be_colored[i]) == 0:
                         raise ValueError('Error')
@@ -71,7 +82,9 @@ class Nonogram(object):
             elif current_element[0] == 'c':  # column
                 column = [self.__nonogram[i][current_element[1]] for i in range(len(self.__nonogram))]
                 self.__can_be_colored = [set() for _ in range(len(column))]
-                self.__solve_line(column, 0, self.__columns_info[current_element[1]])
+                self.__evaluated_positions = [[None for _ in range(len(self.__columns_info[current_element[1]]))]
+                                              for __ in range(len(column))]
+                self.__solve_line(column, 0, self.__columns_info[current_element[1]], 0)
                 for i in range(len(column)):
                     if len(self.__can_be_colored[i]) == 0:
                         raise ValueError('Error')
