@@ -98,8 +98,16 @@ class Nonogram(object):
 
     def __str__(self):
         result = ''
+        max_color_len = 0
+        for color in self.__colors:
+            max_color_len = len(color) if len(color) > max_color_len else max_color_len
+        formatting = '{' + f':^{max_color_len}' + '}'
         for line in self.__nonogram:
-            result += ' '.join(line) + '\n'
+            for i in range(len(line)):
+                if i > 0:
+                    result += ' '
+                result += formatting.format(line[i])
+            result += '\n'
         return result
 
 
