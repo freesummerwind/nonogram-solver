@@ -111,7 +111,7 @@ class Nonogram(object):
         return result
 
 
-def line_transformer(line, colors):
+def line_transformer(line, colors, counter):
     words_in_line = line.split()
     elements = []
     if len(words_in_line) > 0:
@@ -123,7 +123,8 @@ def line_transformer(line, colors):
                 else:
                     break
             if index >= len(word) or word[index:] not in colors:
-                raise Exception('Incorrect input: no such color \'{0}\''.format(word[index:]))
+                raise Exception('Incorrect input: no such color \'' + word[index:] + '\'')
+            counter[word[index:]] += int(word[:index])
             elements.append((word[index:], int(word[:index])))
     return elements
 
@@ -132,6 +133,8 @@ def file_reader(path_to_file):
     colors = []
     lines = []
     columns = []
+    colors_in_lines = {}
+    colors_in_columns = {}
     colors_filled = False
     lines_filled = False
     with open(path_to_file) as file:
@@ -141,6 +144,9 @@ def file_reader(path_to_file):
                 if len(line) < 9 or line[:8] != 'colors: ':
                     raise Exception('Incorrect input: no colors')
                 colors = line[8:].split()
+                for color in colors:
+                    colors_in_lines[color] = 0
+                    colors_in_columns[color] = 0
                 colors_filled = True
             elif not lines_filled:
                 if line == 'lines:':
@@ -148,7 +154,19 @@ def file_reader(path_to_file):
                 elif line == 'columns:':
                     lines_filled = True
                 else:
-                    lines.append(line_transformer(line, colors))
+                    lines.append(line_transformer(line, colors, colors_in_lines))
             else:
-                columns.append(line_transformer(line, colors))
+                columns.append(line_transformer(line, colors, colors_in_columns))
+    flag = True
+    incorrect_colors = []
+    for color in colors:
+        if colors_in_lines[color] != colors_in_columns[color]:
+            flag = False
+            incorrect_colors.append(color)
+    if not flag:
+        message = "Incorrect colors in nonogram:\n"
+        for color in incorrect_colors:
+            message += color + ": in lines " + str(colors_in_lines[color]) + ", in columns " \
+                       + str(colors_in_columns[color]) + '\n'
+        raise Exception(message)
     return Nonogram(colors, lines, columns)
