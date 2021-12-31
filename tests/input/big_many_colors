@@ -1,0 +1,154 @@
+colors: brn grn org gra yel blk blu
+lines:
+2yel
+3yel 4yel
+1yel 2org 2yel 3yel 2org 1yel
+1org 4yel 1org
+1brn 1org 3yel 1org 4yel 2org 3gra
+2brn 1org 2gra 5yel 1org 4yel 1org 5yel 5gra 5brn
+3brn 1org 3gra 7yel 2org 8yel 2gra 7brn 4gra 2brn
+3brn 2org 4gra 1yel 1org 1yel 2org 1yel 1org 1yel 4org 5yel 3gra 13brn 1gra 2brn
+3brn 1org 1brn 2org 5gra 2yel 1org 2yel 1org 4yel 2org 3yel 4gra 3brn 3brn 1gra 1brn 1gra 3brn
+3brn 1org 1brn 3org 4gra 1yel 2org 2yel 1org 2yel 2org 2yel 2org 3yel 3gra 3brn 2brn 1gra 2brn 1gra 3brn
+3brn 2org 1brn 3org 2gra 1yel 1org 5yel 1org 3yel 1org 2yel 2org 2yel 3gra 1gra 2brn 1brn 1gra 3brn 1gra 1brn 1gra
+3brn 1org 1brn 4org 2gra 1yel 2org 8yel 1org 3yel 2org 1yel 2gra 1org 1gra 2brn 2brn 1gra 3brn 1gra
+3brn 1org 1brn 5org 2gra 3yel 2brn 3yel 1brn 1yel 1org 2yel 1org 3yel 4org 1gra 2brn 1brn 1gra 2brn
+3brn 1org 1brn 6org 2yel 4brn 1yel 2brn 4yel 3org 1brn 7org 1gra 2brn 1gra 1brn
+3brn 1org 2brn 4org 1brn 1yel 3brn 1yel 3org 1brn 2yel 5org 1brn 11org 1gra 3brn
+1brn 5org 5brn 6org 1brn 1yel 6org 3brn 4org 4brn 2gra 2brn 9org
+3brn 1org 4brn 4org 1brn 4org 1brn 6org 2brn 1org 7brn 3gra 8brn 3org
+1brn 1org 4brn 3org 1brn 7org 3brn 4org 3brn 2brn 2org
+7brn 2org 1brn 5org 1blu 1brn 2brn 4org 1brn 1brn 2gra
+6brn 3org 1brn 1blu 5org 1blu 1blk 1blu 1brn 5brn 1gra 1brn 1gra
+3brn 7org 1blu 1blk 1blu 4org 1blu 1blk 1blu 1brn 2gra
+3brn 7org 1blu 1blk 1blu 5org 1blu 1brn 2gra
+2brn 9org 1blu 9org 1brn 2gra
+3brn 13org 8yel 1gra 1brn 1gra
+3brn 12org 10yel 2gra 1brn 1gra
+2brn 11org 12yel 15brn 2brn 4org 1gra 2brn 1gra
+2brn 9org 14yel 5brn 7org 13brn 4org 5gra
+1brn 9org 12yel 1blk 2yel 4brn 14org 5brn 6org 1brn 1gra
+2brn 8org 11yel 2blk 2yel 3brn 16org 3brn 6org 1brn
+3brn 4org 6yel 1blk 7yel 1blk 2yel 3brn 25org 1brn
+3brn 3org 2yel 1org 4yel 2blk 9yel 2brn 27org 1brn
+1brn 3org 3yel 1org 4yel 1blk 9yel 2brn 28org 1brn
+1brn 2org 3yel 1org 13yel 3brn 28org 1brn
+1brn 1org 3yel 1org 12yel 1blu 2brn 30org 1brn
+1org 3yel 1org 10yel 3blu 2brn 16org 4brn 10org 1brn
+1org 3yel 1blk 1org 5yel 2org 1brn 3blu 3brn 6org 2brn 6org 8brn 8org 1brn
+1org 2yel 2blk 5org 3brn 3blu 3brn 5org 5brn 3org 10brn 4org 2brn 1org 2brn
+1org 8yel 3brn 3blu 3brn 6org 5brn 4org 9brn 4org 5brn
+8org 3brn 3blu 1brn 7org 6brn 5org 6brn 4org 7brn
+1org 2brn 2blu 2brn 7org 5brn 7org 3brn 7org 6brn
+5blu 1brn 7org 6brn 18org 4brn
+3blu 2brn 8org 5brn 11org 1brn 1gra 6org 3brn
+1yel 2blu 1yel 1brn 10org 3brn 12org 1brn 1gra 6org 3brn
+1yel 1yel 25org 1brn 1gra 8org 2brn
+2yel 7org 1gra 18org 1brn 1gra 9org 1brn
+3yel 5org 1gra 19org 1brn 1gra 8org 1gra
+3yel 1yel 4org 1gra 18org 1brn 1gra 9org 1gra
+2yel 3yel 3org 1gra 18org 1brn 1gra 9org 1gra
+1gra 1yel 5yel 3org 1gra 11org 1brn 6org 1brn 1gra 8org 1gra
+1gra 1yel 3yel 2yel 3org 1gra 10org 1brn 7org 1brn 8org 1gra
+1gra 2yel 2yel 3org 1gra 9org 1brn 8org 1brn 8org 1gra
+3gra 7yel 1brn 3org 1gra 7org 2brn 8org 1gra 2brn 8org 1gra
+1org 2brn 2org 3yel 3brn 3org 2gra 5org 3brn 7org 1gra 5brn 6org 1gra
+1org 3brn 2gra 3brn 2org 2gra 4org 3brn 4org 5brn 2gra 5brn 4org 1gra
+2org 1brn 2gra 2brn 1org 2gra 5org 6brn 7gra 5brn 4org 1brn
+4org 2gra 3brn 1gra 6org 1brn 7gra 4brn 5org 1brn
+5org 2gra 1gra 6org 1brn 1gra 1org 5gra 2brn 6org 1brn
+6org 1gra 1gra 6org 1brn 1gra 1org 4gra 1gra 5org 1brn
+2gra 5org 1blk 1gra 2org 1brn 1org 3brn 1gra 2org 3gra 1gra 4org 1brn
+3gra 3org 3blk 1gra 2org 3brn 2grn 1gra 2org 4gra 1gra 3org 1brn
+4gra 4blk 4grn 1gra 2org 2brn 1grn 1gra 2org 5gra 6grn 1gra 3org 1brn
+2gra 6blk 7grn 1gra 3org 1brn 1grn 1blk 2org 4gra 9grn 1gra 3org 1gra
+8blk 8grn 1gra 3org 1gra 7blk 9grn 1gra 4org 2gra
+5grn 6blk 8grn 1gra 4org 1gra 6blk 9grn 1gra 6org 1gra 2grn
+9grn 6blk 6grn 2gra 5org 1gra 6blk 8grn 1gra 7org 1gra 8grn
+14grn 3blk 1grn 2blk 6grn 1gra 6org 2gra 5blk 9grn 2gra 5org 1gra 11grn
+16grn 3blk 1grn 1blk 8grn 1blk 5org 2gra 3blk 11grn 2blk 2gra 3org 1gra 14grn
+31grn 3blk 1org 3gra 1blk 14grn 9blk 14grn
+31grn 10blk 14grn 9blk 14grn
+28grn 11blk 12grn 10blk 14grn
+29grn 7blk 16grn 6blk 13grn
+26grn 6blk 17grn 5blk 12grn
+58grn
+columns:
+3brn 1grn
+9brn 1grn
+1org 9brn 3grn
+1org 2brn 3org 4brn 3grn
+2org 2brn 3org 2brn 4grn
+3org 3brn 1org 2brn 5grn
+5org 1brn 2org 1brn 6grn
+5org 1brn 1org 1brn 7brn 6grn
+4org 1brn 1org 10brn 8grn
+5gra 7org 4brn 1org 6brn 8grn
+7gra 4org 4brn 6org 1brn 1org 3brn 8grn
+7gra 2org 5brn 9org 3brn 8grn
+3gra 2yel 1gra 2org 5brn 9org 2brn 1org 1brn 8grn
+3yel 1gra 1yel 2org 2yel 5brn 14org 1brn 8grn
+1yel 3yel 1org 1yel 1org 1yel 1org 3yel 1brn 20org 9grn
+1yel 1org 5yel 1org 3yel 3brn 15org 5yel 2org 9grn
+1yel 1org 3yel 2org 3yel 3brn 3org 2brn 10org 8yel 1org 9grn
+2yel 2org 2yel 1org 4yel 3brn 2org 1brn 7org 9yel 1org 9grn
+3yel 1org 3yel 1org 3yel 1brn 1yel 1org 1brn 6org 1yel 5org 2blk 1yel 1org 10grn
+4yel 2org 1yel 1org 3yel 3org 2blu 4org 8yel 1org 1blk 1yel 1org 10grn
+3yel 1org 6yel 1brn 4org 1blu 2blk 1blu 3org 10yel 1org 1yel 1org 1gra 1org 10grn
+4yel 2org 1yel 1org 2yel 2brn 6org 2blu 3org 11yel 1org 1yel 1org 3gra 1brn 1org 2gra 3grn 1blk 6grn
+2yel 2org 2yel 1org 1yel 1org 4yel 2brn 8org 12yel 1org 1yel 1org 1gra 2yel 1gra 2brn 4org 4gra 1blk 2grn 2blk 6grn
+3yel 2org 1yel 1org 2yel 3org 3yel 1brn 6org 6yel 3blk 4yel 1org 1yel 1org 2yel 2yel 1org 1brn 5org 3gra 5blk 6grn
+2yel 1org 2yel 2org 6yel 8org 7yel 1blk 5yel 1org 2brn 1org 1blu 2yel 2yel 1yel 1org 2brn 5org 1gra 5blk 7grn
+1yel 1org 3yel 2org 4yel 9org 12yel 1org 4brn 3blu 3yel 2yel 2yel 2gra 5org 1gra 4blk 1grn 1blk 6grn
+1yel 4yel 2org 1yel 6org 2org 12yel 1org 4brn 3blu 3yel 2yel 2yel 3gra 4org 6blk 7grn
+5yel 2org 1yel 4org 2blu 1org 12yel 2brn 5blu 2yel 1org 1yel 3yel 2yel 2gra 2org 7blk 7grn
+6yel 1org 1yel 4org 1blu 2blk 1blu 1org 12yel 6blu 2brn 3org 3yel 1yel 1brn 2gra 7blk 8grn
+2yel 1gra 4yel 1brn 3org 2blu 1org 11yel 5blu 3brn 5org 5yel 1brn 4blk 10grn
+5gra 2org 9brn 5yel 1blk 5yel 3blu 3brn 9org 2yel 3brn 7grn 1blk 3grn
+6gra 3org 3brn 3yel 3blk 3yel 2blu 3brn 15org 1brn 7grn 2blk 3grn
+5gra 4org 1brn 1org 2brn 7yel 6brn 15org 2brn 7grn 2blk 1grn 1blk 1grn
+4org 1brn 1org 2brn 5yel 6brn 8org 4gra 5org 2brn 6grn 5blk 1grn
+3org 1brn 2org 1brn 7brn 11org 1gra 4org 4gra 2org 1brn 5grn 1gra 6blk 1grn
+3org 1brn 2org 1brn 5brn 21org 3gra 1brn 4grn 1gra 2org 5blk 1grn
+3org 1brn 2org 1brn 4brn 23org 6gra 4grn 1gra 3org 4blk 1grn
+1org 3brn 1org 1brn 2brn 12org 1brn 18org 1gra 3grn 1gra 3org 1gra 4blk 1grn
+1org 4brn 1brn 11org 4brn 18org 3gra 4org 1gra 3blk 2grn
+1org 3brn 1brn 10org 7brn 15org 1brn 8org 1gra 3blk 2grn
+1org 1brn 1brn 9org 8brn 16org 1brn 6org 1gra 3blk 3grn
+1org 1brn 9org 8brn 9org 2brn 4org 3brn 4org 2gra 6grn
+1brn 10org 6brn 9org 4brn 3org 4brn 4gra 1blk 6grn
+1brn 10org 3brn 12org 8brn 3grn 5blk 6grn
+1brn 24org 1brn 3org 1brn 1grn 1gra 6blk 6grn
+1brn 22org 2brn 4org 1brn 1gra 2org 4blk 7grn
+2brn 27org 1brn 1gra 3org 4blk 7grn
+2brn 9org 1brn 17org 1brn 3gra 2org 2gra 4blk 7grn
+2brn 8org 3brn 15org 1brn 2gra 3org 3gra 3blk 8grn
+2brn 8org 4brn 14org 1brn 8gra 1blk 10grn
+3gra 2brn 7org 6brn 13org 1brn 8gra 11grn
+4brn 2gra 2brn 7org 6brn 12org 1gra 1brn 7gra 12grn
+7brn 1gra 3brn 6org 6brn 6org 3brn 2org 1gra 2brn 4gra 13grn
+3brn 2brn 1gra 4brn 5org 5brn 4org 3brn 3gra 4brn 4gra 9grn 1blk 3grn
+2brn 2brn 1gra 3brn 6org 4brn 2org 2brn 3gra 5org 2brn 2gra 9grn 1blk 3grn
+2brn 1brn 1gra 3brn 6org 3brn 3org 2gra 9org 2brn 7grn 3blk 1grn 1blk 1grn
+2brn 1org 1gra 2brn 8org 2brn 14org 3brn 6grn 6blk 1grn
+1gra 2brn 1org 1brn 1brn 26org 3brn 4grn 2gra 6blk 1grn
+1gra 2brn 1org 1brn 1brn 26org 4brn 2grn 1gra 1org 2gra 5blk 1grn
+1gra 2brn 1org 1brn 1brn 12org 1brn 14org 4brn 1gra 1grn 1gra 3org 1gra 5blk 1grn
+1gra 2brn 1org 1brn 1brn 12org 2brn 14org 2brn 2org 4gra 5org 4blk 2grn
+1gra 3brn 1org 1brn 11org 5brn 26org 4blk 2grn
+1brn 1gra 3brn 1org 1brn 3org 2brn 6org 7brn 5org 3gra 16org 3blk 3grn
+1gra 1brn 1gra 5brn 1org 1brn 1org 1gra 1brn 3brn 4org 7brn 1org 3gra 2gra 13org 1gra 2blk 4grn
+1gra 1brn 1gra 1brn 3gra 2brn 1org 1brn 1org 2gra 12brn 1gra 5org 2brn 2gra 2org 1gra 7grn
+1gra 1brn 1gra 4brn 3gra 1org 1brn 2gra 4brn 1brn 2org 2brn 3gra 8grn
+2brn 2gra 3brn 1org 1brn 1gra 1brn 1gra 2brn 9grn
+3brn 1gra 3brn 2org 1brn 1gra 1brn 1gra 9grn
+3brn 1gra 3brn 1org 2gra 1gra 1brn 1gra 8grn
+3brn 1gra 1brn 3gra 1brn 1gra 8grn
+1brn 2gra 5gra 8grn
+8grn
+7grn
+7grn
+6grn
+5grn
+4grn
+3grn
