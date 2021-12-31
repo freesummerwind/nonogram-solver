@@ -1,17 +1,9 @@
-from collections import deque
 from string import whitespace
 
 
-def no_empties(line, current, length):
+def no_other_colors(line, current, length, color):
     for i in range(length):
-        if line[current + i] == '-':
-            return False
-    return True
-
-
-def no_colored(line, current, length):
-    for i in range(length):
-        if line[current + i] != '-' and line[current + i] != '.':
+        if line[current + i] != color and line[current + i] != '.':
             return False
     return True
 
@@ -22,79 +14,87 @@ class Nonogram(object):
         self.__nonogram = [['.' for _ in range(len(columns_info))] for __ in range(len(lines_info))]
         self.__lines_info = lines_info
         self.__columns_info = columns_info
+        self.__line_was_changed = [True for _ in range(len(lines_info))]
+        self.__column_was_changed = [True for _ in range(len(columns_info))]
         self.__colors = colors
-        self.__can_be_colored = []
+        self.__can_be_colored = [[set(colors + ['-']) for _ in range(len(columns_info))]
+                                 for __ in range(len(lines_info))]
+        self.__evaluated_line = []
         self.__evaluated_positions = []
 
     def __solve_line(self, line, start, blocks_info, current_block):
         flag = False
         if len(blocks_info) == 0:
-            if no_colored(line, start, len(line) - start):
+            if no_other_colors(line, start, len(line) - start, '-'):
                 flag = True
                 for i in range(start, len(line)):
-                    self.__can_be_colored[i].add('-')
+                    self.__evaluated_line[i].add('-')
         else:
             for i in range(start, len(line) - blocks_info[0][1] + 1):
-                if not no_colored(line, start, i - start):
+                if not no_other_colors(line, start, i - start, '-'):
                     break
+                next_block_same_colored = len(blocks_info) != 1 and blocks_info[0][0] == blocks_info[1][0]
                 if self.__evaluated_positions[i][current_block] is None:
-                    if no_empties(line, i, blocks_info[0][1]) \
-                            and (i == len(line) - blocks_info[0][1] or no_colored(line, i + blocks_info[0][1], 1)) \
-                            and self.__solve_line(line, i + blocks_info[0][1] + 1, blocks_info[1:], current_block + 1):
+                    if no_other_colors(line, i, blocks_info[0][1], blocks_info[0][0]) \
+                            and (i == len(line) - blocks_info[0][1] or not next_block_same_colored
+                                 or no_other_colors(line, i + blocks_info[0][1], 1, '-')) \
+                            and self.__solve_line(line, i + blocks_info[0][1] + int(next_block_same_colored),
+                                                  blocks_info[1:], current_block + 1):
                         self.__evaluated_positions[i][current_block] = True
                     else:
                         self.__evaluated_positions[i][current_block] = False
                 if self.__evaluated_positions[i][current_block]:
                     flag = True
-                    for j in range(start, i + blocks_info[0][1] + int(i < len(line) - blocks_info[0][1])):
+                    for j in range(start, i + blocks_info[0][1] + int(i < len(line) - blocks_info[0][1]
+                                                                      and next_block_same_colored)):
                         if i <= j < i + blocks_info[0][1]:
-                            self.__can_be_colored[j].add('b')
+                            self.__evaluated_line[j].add(blocks_info[0][0])
                         else:
-                            self.__can_be_colored[j].add('-')
+                            self.__evaluated_line[j].add('-')
         return flag
 
     def solve(self):
-        queue = deque()
-        in_queue = set()
-        for i in range(len(self.__lines_info)):
-            queue.append(('l', i))
-            in_queue.add(('l', i))
-        for i in range(len(self.__columns_info)):
-            queue.append(('c', i))
-            in_queue.add(('c', i))
-        while queue:
-            current_element = queue.popleft()
-            in_queue.remove(current_element)
-            if current_element[0] == 'l':  # line
-                line = self.__nonogram[current_element[1]]
-                self.__can_be_colored = [set() for _ in range(len(line))]
-                self.__evaluated_positions = [[None for _ in range(len(self.__lines_info[current_element[1]]))]
-                                              for __ in range(len(line))]
-                self.__solve_line(line, 0, self.__lines_info[current_element[1]], 0)
-                for i in range(len(line)):
-                    if len(self.__can_be_colored[i]) == 0:
-                        raise ValueError('Error')
-                    elif len(self.__can_be_colored[i]) == 1 and self.__nonogram[current_element[1]][i] == '.':
-                        self.__nonogram[current_element[1]][i] = list(self.__can_be_colored[i])[0]
-                        if ('c', i) not in in_queue:
-                            queue.append(('c', i))
-                            in_queue.add(('c', i))
-            elif current_element[0] == 'c':  # column
-                column = [self.__nonogram[i][current_element[1]] for i in range(len(self.__nonogram))]
-                self.__can_be_colored = [set() for _ in range(len(column))]
-                self.__evaluated_positions = [[None for _ in range(len(self.__columns_info[current_element[1]]))]
-                                              for __ in range(len(column))]
-                self.__solve_line(column, 0, self.__columns_info[current_element[1]], 0)
-                for i in range(len(column)):
-                    if len(self.__can_be_colored[i]) == 0:
-                        raise ValueError('Error')
-                    elif len(self.__can_be_colored[i]) == 1 and self.__nonogram[i][current_element[1]] == '.':
-                        self.__nonogram[i][current_element[1]] = list(self.__can_be_colored[i])[0]
-                        if ('l', i) not in in_queue:
-                            queue.append(('l', i))
-                            in_queue.add(('l', i))
-            else:
-                raise ValueError('Error')
+        was_changed = True
+        while was_changed:
+            was_changed = False
+            for j in range(len(self.__lines_info)):  # lines
+                if self.__line_was_changed[j]:
+                    self.__line_was_changed[j] = False
+                    line = self.__nonogram[j]
+                    self.__evaluated_line = [set() for _ in range(len(line))]
+                    self.__evaluated_positions = [[None for _ in range(len(self.__lines_info[j]))]
+                                                  for __ in range(len(line))]
+                    self.__solve_line(line, 0, self.__lines_info[j], 0)
+                    for i in range(len(line)):
+                        old_number_of_colors = len(self.__can_be_colored[j][i])
+                        self.__can_be_colored[j][i] &= self.__evaluated_line[i]
+                        if len(self.__can_be_colored[j][i]) == 0:
+                            raise ValueError('Error1')
+                        elif len(self.__can_be_colored[j][i]) == 1 and self.__nonogram[j][i] == '.':
+                            self.__nonogram[j][i] = list(self.__can_be_colored[j][i])[0]
+                        if old_number_of_colors != len(self.__can_be_colored[j][i]):
+                            self.__line_was_changed[j] = True
+                            self.__column_was_changed[i] = True
+                            was_changed = True
+            for j in range(len(self.__columns_info)):  # columns
+                if self.__column_was_changed[j]:
+                    self.__column_was_changed[j] = False
+                    column = [self.__nonogram[i][j] for i in range(len(self.__nonogram))]
+                    self.__evaluated_line = [set() for _ in range(len(column))]
+                    self.__evaluated_positions = [[None for _ in range(len(self.__columns_info[j]))]
+                                                  for __ in range(len(column))]
+                    self.__solve_line(column, 0, self.__columns_info[j], 0)
+                    for i in range(len(column)):
+                        old_number_of_colors = len(self.__can_be_colored[i][j])
+                        self.__can_be_colored[i][j] &= self.__evaluated_line[i]
+                        if len(self.__can_be_colored[i][j]) == 0:
+                            raise ValueError('Error2')
+                        elif len(self.__can_be_colored[i][j]) == 1 and self.__nonogram[i][j] == '.':
+                            self.__nonogram[i][j] = list(self.__can_be_colored[i][j])[0]
+                        if old_number_of_colors != len(self.__can_be_colored[i][j]):
+                            self.__line_was_changed[i] = True
+                            self.__column_was_changed[j] = True
+                            was_changed = True
 
     def __str__(self):
         result = ''
