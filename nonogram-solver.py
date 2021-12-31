@@ -1,3 +1,4 @@
+import argparse
 from string import whitespace
 
 
@@ -170,3 +171,17 @@ def file_reader(path_to_file):
                        + str(colors_in_columns[color]) + '\n'
         raise Exception(message)
     return Nonogram(colors, lines, columns)
+
+
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser(description='Files for input and output')
+    parser.add_argument('input_file', type=str, help='name of file with numbers')
+    parser.add_argument('-s', type=str, default=None, help='name of file with result')
+    arguments = parser.parse_args()
+    nonogram = file_reader(arguments.input_file)
+    nonogram.solve()
+    if arguments.s is None:
+        print(nonogram)
+    else:
+        with open(arguments.s, 'w') as f_out:
+            f_out.write(str(nonogram))
