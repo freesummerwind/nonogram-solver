@@ -19,6 +19,12 @@ def no_other_colors(line, current, length, color):
     return True
 
 
+class NonoException(Exception):
+    """
+    Класс для выброса исключений в нонограмме
+    """
+
+
 class Nonogram(object):
 
     def __init__(self, colors, lines_info, columns_info):
@@ -130,7 +136,7 @@ class Nonogram(object):
         old_number_of_colors = len(self.__can_be_colored[line_number][column_number])
         self.__can_be_colored[line_number][column_number] &= self.__evaluated_line[position]
         if len(self.__can_be_colored[line_number][column_number]) == 0:
-            raise Exception(f'Incorrect input: cell on position [{line_number}][{column_number}] cannot be colored')
+            raise NonoException(f'Incorrect input: cell on position [{line_number}][{column_number}] cannot be colored')
         elif len(self.__can_be_colored[line_number][column_number]) == 1:
             self.__nonogram[line_number][column_number] = \
                 list(self.__can_be_colored[line_number][column_number])[0]
@@ -163,7 +169,7 @@ class Nonogram(object):
                                                   for __ in range(len(line))]
                     can_be_solved = self.__solve_line(line, 0, self.__lines_info[line_number], 0)
                     if not can_be_solved:
-                        raise Exception('Incorrect input')
+                        raise NonoException(f'Incorrect input: line {line_number} cannot be colored')
                     for column_number in range(len(line)):
                         if self.__cell_coloring(line_number, column_number, column_number):
                             was_changed = True
@@ -174,7 +180,9 @@ class Nonogram(object):
                     self.__evaluated_line = [set() for _ in range(len(column))]
                     self.__evaluated_positions = [[None for _ in range(len(self.__columns_info[column_number]))]
                                                   for __ in range(len(column))]
-                    self.__solve_line(column, 0, self.__columns_info[column_number], 0)
+                    can_be_solved = self.__solve_line(column, 0, self.__columns_info[column_number], 0)
+                    if not can_be_solved:
+                        raise NonoException(f'Incorrect input: column {column_number} cannot be colored')
                     for line_number in range(len(column)):
                         if self.__cell_coloring(line_number, column_number, line_number):
                             was_changed = True
@@ -203,7 +211,7 @@ class Nonogram(object):
                 self.__line_was_changed[x] = True
                 self.__column_was_changed[y] = True
                 self.__solve()
-            except Exception:
+            except NonoException:
                 if i == len(properties) - 1:
                     raise
                 self.__nonogram = old_nono
@@ -253,7 +261,7 @@ def line_transformer(line, colors, counter):
                 else:
                     break
             if index >= len(word) or word[index:] not in colors:
-                raise Exception('Incorrect input: no such color \'' + word[index:] + '\'')
+                raise NonoException('Incorrect input: no such color \'' + word[index:] + '\'')
             counter[word[index:]] += int(word[:index])
             elements.append((word[index:], int(word[:index])))
     return elements
@@ -277,7 +285,7 @@ def file_reader(path_to_file):
             line = line.strip(whitespace)
             if not colors_filled:
                 if not line.startswith('colors: '):
-                    raise Exception('Incorrect input: no colors')
+                    raise NonoException('Incorrect input: no colors')
                 colors = line[8:].split()
                 for color in colors:
                     colors_in_lines[color] = 0
@@ -302,7 +310,7 @@ def file_reader(path_to_file):
         message = "Incorrect colors in nonogram:\n"
         for color in incorrect_colors:
             message += f'{color}: in lines {colors_in_lines[color]}, in columns {colors_in_columns[color]}\n'
-        raise Exception(message)
+        raise NonoException(message)
     return Nonogram(colors, lines, columns)
 
 
