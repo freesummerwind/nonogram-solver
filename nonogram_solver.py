@@ -51,7 +51,9 @@ class Nonogram(object):
         self.__columns_info = columns_info
         self.__line_was_changed = [True for _ in range(len(lines_info))]
         self.__column_was_changed = [True for _ in range(len(columns_info))]
-        self.__colors = colors
+        self.__max_color_length = 0
+        for color in colors:
+            self.__max_color_length = len(color) if len(color) > self.__max_color_length else self.__max_color_length
         self.__can_be_colored = [[set(colors + ['-']) for _ in range(len(columns_info))]
                                  for __ in range(len(lines_info))]
         self.__evaluated_line = []
@@ -229,10 +231,7 @@ class Nonogram(object):
         :return:
         """
         result = ''
-        max_color_len = 0
-        for color in self.__colors:
-            max_color_len = len(color) if len(color) > max_color_len else max_color_len
-        formatting = '{' + f':^{max_color_len}' + '}'
+        formatting = '{' + f':^{self.__max_color_length}' + '}'
         for line in self.__nonogram:
             for i in range(len(line)):
                 if i > 0:
