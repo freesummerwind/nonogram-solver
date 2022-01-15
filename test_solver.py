@@ -1,7 +1,7 @@
 import pathlib
 import pytest
 
-from nonogram_solver import file_reader
+from nonogram_solver import file_reader, NonoException
 
 
 def get_dataset_item(element_path):
@@ -19,7 +19,7 @@ def get_dataset(dataset_directory_path):
 
 
 @pytest.mark.parametrize(
-    'input_file_path,expected_file_path',
+    'input_file_path, expected_file_path',
     get_dataset(pathlib.Path('tests/input'))
 )
 def test(input_file_path, expected_file_path):
@@ -30,3 +30,20 @@ def test(input_file_path, expected_file_path):
 
     if str(nonogram) != answer:
         raise ValueError('Test failed')
+
+
+def get_files_from_directory(directory_path):
+    files = []
+    for file in pathlib.Path(directory_path).iterdir():
+        files.append(file)
+    return files
+
+
+@pytest.mark.parametrize(
+    'exception_file_path',
+    get_files_from_directory(pathlib.Path('tests/exceptions'))
+)
+def test_exceptions(exception_file_path):
+    with pytest.raises(NonoException):
+        nonogram = file_reader(exception_file_path)
+        nonogram.solve()
