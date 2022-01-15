@@ -50,6 +50,45 @@ class Nonogram(object):
         self.__evaluated_line = []
         self.__evaluated_positions = []
 
+    def __presolve_line(self, line, possible_colors, blocks_info):
+        evaluated_line = [[] for _ in range(len(line))]
+        current = 0
+        for i in range(len(blocks_info)):  # left position
+            if i > 0 and blocks_info[i][0] == blocks_info[i - 1][0]:
+                evaluated_line[current].append(('-', i))
+                current += 1
+            for j in range(blocks_info[i][1]):
+                evaluated_line[current + j].append((blocks_info[i][0], i))
+            current += blocks_info[i][1]
+        while current < len(line):
+            evaluated_line[current].append(('-', len(blocks_info) - 1))
+            current += 1
+        current -= 1
+        for i in range(len(blocks_info) - 1, -1, -1):  # right position
+            if i < len(blocks_info) - 1 and blocks_info[i][0] == blocks_info[i + 1][0]:
+                evaluated_line[current].append(('-', i))
+                current -= 1
+            for j in range(blocks_info[i][1]):
+                evaluated_line[current - j].append((blocks_info[i][0], i))
+            current -= blocks_info[i][1]
+        while current > -1:
+            evaluated_line[current].append(('-', -1))
+            current -= 1
+        for i in range(len(line)):  # check positions for ability to paint right now
+            if evaluated_line[i][0] == evaluated_line[i][1]:
+                line[i] = evaluated_line[i][0][0]
+                possible_colors[i] = set(evaluated_line[i][0][0])
+
+    def __presolve(self):
+        for i in range(len(self.__lines_info)):
+            line = self.__nonogram[i]
+            possible_colors = self.__can_be_colored[i]
+            self.__presolve_line(line, possible_colors, self.__lines_info[i])
+        for i in range(len(self.__columns_info)):
+            column = [line[i] for line in self.__nonogram]
+            possible_colors = [line[i] for line in self.__can_be_colored]
+            self.__presolve_line(column, possible_colors, self.__columns_info[i])
+
     def __solve_line(self, line, start, blocks_info, current_block):
         """
         Функция, рассчитывающая строку. Начиная с первой клетки пытаемся расставить блоки, возможность поставить i-й
@@ -93,7 +132,7 @@ class Nonogram(object):
                             self.__evaluated_line[j].add('-')
         return flag
 
-    def solve(self):
+    def __solve(self):
         """
         Проходим поочередно по всем строкам и стоблцам, производим расчет для тех строк и столбцов, в которых были
         изменения на прошлой итерации. Если получили новые изменения - помечаем столбец и строку, в которых находится
@@ -114,7 +153,9 @@ class Nonogram(object):
                     self.__evaluated_line = [set() for _ in range(len(line))]
                     self.__evaluated_positions = [[None for _ in range(len(self.__lines_info[j]))]
                                                   for __ in range(len(line))]
-                    self.__solve_line(line, 0, self.__lines_info[j], 0)
+                    can_be_solved = self.__solve_line(line, 0, self.__lines_info[j], 0)
+                    if not can_be_solved:
+                        raise Exception('Incorrect input')
                     for i in range(len(line)):
                         old_number_of_colors = len(self.__can_be_colored[j][i])
                         self.__can_be_colored[j][i] &= self.__evaluated_line[i]
@@ -147,6 +188,11 @@ class Nonogram(object):
                             self.__line_was_changed[i] = True
                             self.__column_was_changed[j] = True
                             was_changed = True
+
+    def solve(self):
+        self.__presolve()
+        self.__solve()
+
 
     def __str__(self):
         """
