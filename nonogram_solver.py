@@ -78,7 +78,7 @@ class Nonogram(object):
         for i in range(len(line)):  # check positions for ability to paint right now
             if evaluated_line[i][0] == evaluated_line[i][1]:
                 line[i] = evaluated_line[i][0][0]
-                possible_colors[i] = set(evaluated_line[i][0][0])
+                possible_colors[i] = {evaluated_line[i][0][0]}
 
     def __presolve(self):
         for i in range(len(self.__lines_info)):
@@ -225,7 +225,6 @@ class Nonogram(object):
     def solve(self):
         self.__presolve()
         self.__solve()
-
 
     def __str__(self):
         """
