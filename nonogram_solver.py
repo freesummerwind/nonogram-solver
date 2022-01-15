@@ -126,6 +126,20 @@ class Nonogram(object):
                             self.__evaluated_line[j].add('-')
         return flag
 
+    def __cell_coloring(self, line_number, column_number, position):
+        old_number_of_colors = len(self.__can_be_colored[line_number][column_number])
+        self.__can_be_colored[line_number][column_number] &= self.__evaluated_line[position]
+        if len(self.__can_be_colored[line_number][column_number]) == 0:
+            raise Exception(f'Incorrect input: cell on position [{line_number}][{column_number}] cannot be colored')
+        elif len(self.__can_be_colored[line_number][column_number]) == 1:
+            self.__nonogram[line_number][column_number] = \
+                list(self.__can_be_colored[line_number][column_number])[0]
+        if old_number_of_colors != len(self.__can_be_colored[line_number][column_number]):
+            self.__line_was_changed[line_number] = True
+            self.__column_was_changed[column_number] = True
+            return True
+        return False
+
     def __solve(self):
         """
         Проходим поочередно по всем строкам и стоблцам, производим расчет для тех строк и столбцов, в которых были
@@ -140,47 +154,29 @@ class Nonogram(object):
         was_changed = True
         while was_changed:
             was_changed = False
-            for j in range(len(self.__lines_info)):  # lines
-                if self.__line_was_changed[j]:
-                    self.__line_was_changed[j] = False
-                    line = self.__nonogram[j]
+            for line_number in range(len(self.__lines_info)):  # lines
+                if self.__line_was_changed[line_number]:
+                    self.__line_was_changed[line_number] = False
+                    line = self.__nonogram[line_number]
                     self.__evaluated_line = [set() for _ in range(len(line))]
-                    self.__evaluated_positions = [[None for _ in range(len(self.__lines_info[j]))]
+                    self.__evaluated_positions = [[None for _ in range(len(self.__lines_info[line_number]))]
                                                   for __ in range(len(line))]
-                    can_be_solved = self.__solve_line(line, 0, self.__lines_info[j], 0)
+                    can_be_solved = self.__solve_line(line, 0, self.__lines_info[line_number], 0)
                     if not can_be_solved:
                         raise Exception('Incorrect input')
-                    for i in range(len(line)):
-                        old_number_of_colors = len(self.__can_be_colored[j][i])
-                        self.__can_be_colored[j][i] &= self.__evaluated_line[i]
-                        if len(self.__can_be_colored[j][i]) == 0:
-                            raise Exception('Incorrect input: cell on position [' + str(j) + '][' + str(i) +
-                                            '] cannot be colored')
-                        elif len(self.__can_be_colored[j][i]) == 1 and self.__nonogram[j][i] == '.':
-                            self.__nonogram[j][i] = list(self.__can_be_colored[j][i])[0]
-                        if old_number_of_colors != len(self.__can_be_colored[j][i]):
-                            self.__line_was_changed[j] = True
-                            self.__column_was_changed[i] = True
+                    for column_number in range(len(line)):
+                        if self.__cell_coloring(line_number, column_number, column_number):
                             was_changed = True
-            for j in range(len(self.__columns_info)):  # columns
-                if self.__column_was_changed[j]:
-                    self.__column_was_changed[j] = False
-                    column = [self.__nonogram[i][j] for i in range(len(self.__nonogram))]
+            for column_number in range(len(self.__columns_info)):  # columns
+                if self.__column_was_changed[column_number]:
+                    self.__column_was_changed[column_number] = False
+                    column = [self.__nonogram[i][column_number] for i in range(len(self.__nonogram))]
                     self.__evaluated_line = [set() for _ in range(len(column))]
-                    self.__evaluated_positions = [[None for _ in range(len(self.__columns_info[j]))]
+                    self.__evaluated_positions = [[None for _ in range(len(self.__columns_info[column_number]))]
                                                   for __ in range(len(column))]
-                    self.__solve_line(column, 0, self.__columns_info[j], 0)
-                    for i in range(len(column)):
-                        old_number_of_colors = len(self.__can_be_colored[i][j])
-                        self.__can_be_colored[i][j] &= self.__evaluated_line[i]
-                        if len(self.__can_be_colored[i][j]) == 0:
-                            raise Exception('Incorrect input: cell on position [' + str(i) + '][' + str(j) +
-                                            '] cannot be colored')
-                        elif len(self.__can_be_colored[i][j]) == 1 and self.__nonogram[i][j] == '.':
-                            self.__nonogram[i][j] = list(self.__can_be_colored[i][j])[0]
-                        if old_number_of_colors != len(self.__can_be_colored[i][j]):
-                            self.__line_was_changed[i] = True
-                            self.__column_was_changed[j] = True
+                    self.__solve_line(column, 0, self.__columns_info[column_number], 0)
+                    for line_number in range(len(column)):
+                        if self.__cell_coloring(line_number, column_number, line_number):
                             was_changed = True
         self.__guess()
 
