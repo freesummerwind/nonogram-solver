@@ -280,7 +280,7 @@ def file_reader(path_to_file):
         for line in file:
             line = line.strip(whitespace)
             if not colors_filled:
-                if len(line) < 9 or line[:8] != 'colors: ':
+                if not line.startswith('colors: '):
                     raise Exception('Incorrect input: no colors')
                 colors = line[8:].split()
                 for color in colors:
@@ -305,8 +305,7 @@ def file_reader(path_to_file):
     if not flag:
         message = "Incorrect colors in nonogram:\n"
         for color in incorrect_colors:
-            message += color + ": in lines " + str(colors_in_lines[color]) + ", in columns " \
-                       + str(colors_in_columns[color]) + '\n'
+            message += f'{color}: in lines {colors_in_lines[color]}, in columns {colors_in_columns[color]}\n'
         raise Exception(message)
     return Nonogram(colors, lines, columns)
 
