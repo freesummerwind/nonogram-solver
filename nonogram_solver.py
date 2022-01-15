@@ -52,33 +52,26 @@ class Nonogram(object):
         self.__evaluated_positions = []
 
     def __presolve_line(self, line, possible_colors, blocks_info):
-        evaluated_line = [[] for _ in range(len(line))]
-        current = 0
-        for i in range(len(blocks_info)):  # left position
+        minimum_length = 0
+        for i in range(len(blocks_info)):
             if i > 0 and blocks_info[i][0] == blocks_info[i - 1][0]:
-                evaluated_line[current].append(('-', i))
+                minimum_length += 1
+            minimum_length += blocks_info[i][1]
+        if minimum_length == 0:
+            for i in range(len(line)):
+                line[i] = '-'
+                possible_colors[i] = {'-'}
+            return
+        number_of_free_cells = len(line) - minimum_length
+        current = 0
+        for i in range(len(blocks_info)):
+            if i > 0 and blocks_info[i][0] == blocks_info[i - 1][0]:
                 current += 1
-            for j in range(blocks_info[i][1]):
-                evaluated_line[current + j].append((blocks_info[i][0], i))
+            if blocks_info[i][1] > number_of_free_cells:
+                for j in range(number_of_free_cells, blocks_info[i][1]):
+                    line[current + j] = blocks_info[i][0]
+                    possible_colors[current + j] = {blocks_info[i][0]}
             current += blocks_info[i][1]
-        while current < len(line):
-            evaluated_line[current].append(('-', len(blocks_info) - 1))
-            current += 1
-        current -= 1
-        for i in range(len(blocks_info) - 1, -1, -1):  # right position
-            if i < len(blocks_info) - 1 and blocks_info[i][0] == blocks_info[i + 1][0]:
-                evaluated_line[current].append(('-', i))
-                current -= 1
-            for j in range(blocks_info[i][1]):
-                evaluated_line[current - j].append((blocks_info[i][0], i))
-            current -= blocks_info[i][1]
-        while current > -1:
-            evaluated_line[current].append(('-', -1))
-            current -= 1
-        for i in range(len(line)):  # check positions for ability to paint right now
-            if evaluated_line[i][0] == evaluated_line[i][1]:
-                line[i] = evaluated_line[i][0][0]
-                possible_colors[i] = {evaluated_line[i][0][0]}
 
     def __presolve(self):
         for i in range(len(self.__lines_info)):
