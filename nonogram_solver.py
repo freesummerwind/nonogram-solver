@@ -1,4 +1,5 @@
 import argparse
+from copy import deepcopy
 from string import whitespace
 
 
@@ -188,6 +189,38 @@ class Nonogram(object):
                             self.__line_was_changed[i] = True
                             self.__column_was_changed[j] = True
                             was_changed = True
+        self.__guess()
+
+    def __guess(self):
+        x, y = 0, 0
+        flag = False
+        for i in range(len(self.__lines_info)):
+            for j in range(len(self.__columns_info)):
+                if self.__nonogram[i][j] == '.':
+                    x, y = i, j
+                    flag = True
+                    break
+            if flag:
+                break
+        if self.__nonogram[x][y] != '.':
+            return
+        properties = list(self.__can_be_colored[x][y])
+        old_nono = deepcopy(self.__nonogram)
+        old_prop = deepcopy(self.__can_be_colored)
+        for i in range(len(properties)):
+            try:
+                self.__can_be_colored[x][y] = {properties[i]}
+                self.__nonogram[x][y] = properties[i]
+                self.__line_was_changed[x] = True
+                self.__column_was_changed[y] = True
+                self.__solve()
+            except Exception:
+                if i == len(properties) - 1:
+                    raise
+                self.__nonogram = old_nono
+                self.__can_be_colored = old_prop
+            else:
+                break
 
     def solve(self):
         self.__presolve()
