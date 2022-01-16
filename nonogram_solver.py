@@ -7,6 +7,7 @@ def no_other_colors(line, current, length, color):
     """
     Функция проверяет, что в линии line начиная с позиции current и до позиции current + length все клетки либо
     еще не были окрашены, либо окрашены цветом color
+
     :param line: array of strings, представление линии
     :param current: integer, стартовая позиция
     :param length: integer, длина блока, который нужно проверить
@@ -34,7 +35,7 @@ class Nonogram(object):
         self.__columns_info - массив пар (цвет, длина), информация о вертикальных блоках нонограммы
         self.__line_was_changed - массив булевых значений, содержит информацию, были ли изменения в i-й строке
         self.__column_was_changed - массив булевых значений, содержит информацию, были ли изменения в i-м столбце
-        self.__colors - массив строк, содержит цвета, которые используются в нонограмме
+        self.__max_color_length - длина самого длинного обозначения цвета, нужна для вывода
         self.__can_be_colored - матрица размера N*M, содержит множества цветов, в которые может быть окрашена
         соответствующая клетка
         self.__evaluated_line - массив, который будет пересоздаваться для расчета строки/столбца. Содержит информацию о
@@ -60,6 +61,14 @@ class Nonogram(object):
         self.__evaluated_positions = []
 
     def __presolve_line(self, line, possible_colors, blocks_info):
+        """
+        Функция, которая делает предрасчет для строки
+
+        :param line: массив строк, информация об уже окрашенных клетках (или еще не окрашенных)
+        :param possible_colors: массив множеств строк, цвета, в которые можно окрасить каждую клетку
+        :param blocks_info: массив пар (цвет, длина), информация о блоках для строки
+        :return:
+        """
         minimum_length = 0
         for i in range(len(blocks_info)):
             if i > 0 and blocks_info[i][0] == blocks_info[i - 1][0]:
@@ -82,6 +91,11 @@ class Nonogram(object):
             current += blocks_info[i][1]
 
     def __presolve(self):
+        """
+        Функция, которая запускает предрасчет для всех строк и столбцов в нонограмме
+
+        :return:
+        """
         for i in range(len(self.__lines_info)):
             line = self.__nonogram[i]
             possible_colors = self.__can_be_colored[i]
@@ -96,7 +110,6 @@ class Nonogram(object):
         Функция, рассчитывающая строку. Начиная с первой клетки пытаемся расставить блоки, возможность поставить i-й
         блок с j-й клетки запоминаем в матрицу self.__evaluated_positions. Возможные варианты окраски i-й клетки
         запоминаем в массив self.__evaluated_line.
-        Сложность O(N*M) - сложность заполнения матрицы.
 
         :param line: массив строк, информация об уже окрашенных клетках (или еще не окрашенных)
         :param start: число, стартовая позиция для текущего блока
@@ -135,6 +148,14 @@ class Nonogram(object):
         return flag
 
     def __cell_coloring(self, line_number, column_number, position):
+        """
+        Функция, которая проверяет, можно ли закрасить клетку с новыми данными, и красит ее
+
+        :param line_number: номер линии, в которой расположена клетка
+        :param column_number: номер столбца, в котором расположена клетка
+        :param position: номер линии или столбца в зависимости от того, что анализировалось при получении новых данных
+        :return:
+        """
         old_number_of_colors = len(self.__can_be_colored[line_number][column_number])
         self.__can_be_colored[line_number][column_number] &= self.__evaluated_line[position]
         if len(self.__can_be_colored[line_number][column_number]) == 0:
@@ -156,7 +177,7 @@ class Nonogram(object):
         помечаем, что в нонограмме были изменения (was_changed). Если на данной итерации в нонограмме были изменения
         (was_changed is True), запускаем новую итерацию. Если изменений не было - то больше рассчитывать нечего, либо
         нонограмма решена, либо она не имеет логического решения (без угадываний).
-        Сложность O((N^2)*(M^2)) - в худшем случае на каждой итерации изменяется только одна клетка
+
         :return:
         """
         was_changed = True
@@ -191,6 +212,12 @@ class Nonogram(object):
         self.__guess()
 
     def __guess(self):
+        """
+        Функция, которая проверяет, все ли клетки окрашены в нонограмме, и если не все - то пытается раскрасить оставшиеся,
+        угадывая цвет клетки, при этом отсеивая невозможные варианты по методу ветвей и границ
+
+        :return:
+        """
         x, y = 0, 0
         flag = False
         for i in range(len(self.__lines_info)):
@@ -222,12 +249,19 @@ class Nonogram(object):
                 break
 
     def solve(self):
+        """
+        Функция, решающая нонограмму: сначала производится предрасчет для нонограммы, затем вызывается функция, реализующая
+        алгоритм решения
+
+        :return:
+        """
         self.__presolve()
         self.__solve()
 
     def __str__(self):
         """
         Строковое представление нонограммы для вывода
+
         :return:
         """
         result = ''
@@ -244,6 +278,7 @@ class Nonogram(object):
 def line_transformer(line, colors, counter):
     """
     Функция, которая преобразует введенные данные в строку с информацией о блоках
+
     :param line: строка, линия с введенной информацией
     :param colors: массив строк, цвета, используемые в нонограмме
     :param counter: словарь {цвет - количество}, для подсчета клеток каждого цвета в информации о строках/столбцах
@@ -269,6 +304,7 @@ def line_transformer(line, colors, counter):
 def file_reader(path_to_file):
     """
     Функция, обрабатывающая входной файл и представляющая информацию в нем в виде нонограммы.
+
     :param path_to_file: строка, путь к входному файлу
     :return: объект класса Nonogram, нонограмма, готовая к расчету
     """
