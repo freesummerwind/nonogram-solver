@@ -216,8 +216,8 @@ class Nonogram(object):
             except NonoException:
                 if i == len(properties) - 1:
                     raise
-                self.__nonogram = old_nono
-                self.__can_be_colored = old_prop
+                self.__nonogram = deepcopy(old_nono)
+                self.__can_be_colored = deepcopy(old_prop)
             else:
                 break
 
