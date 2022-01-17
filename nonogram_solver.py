@@ -267,11 +267,7 @@ class Nonogram(object):
         result = ''
         formatting = '{' + f':^{self.__max_color_length}' + '}'
         for line in self.__nonogram:
-            for i in range(len(line)):
-                if i > 0:
-                    result += ' '
-                result += formatting.format(line[i])
-            result += '\n'
+            result += ' '.join(map(formatting.format, line)) + '\n'
         return result
 
 
