@@ -43,7 +43,7 @@ class Nonogram(object):
         self.__evaluated_positions - матрица, в которой будут запоминаться уже рассчитанные расположения блоков в линии.
         Нужна для уменьшении глубины рекурсии путем сохранения уже рассчитанных значений
 
-        :param colors: array of strings, цвета, используемые в нонограмме
+        :param colors: set of strings, цвета, используемые в нонограмме
         :param lines_info: array of pairs (string, int), информация о горизонтальных блоках нонограммы
         :param columns_info: array of pairs (string, int), информация о вертикальных блоках нонограммы
         """
@@ -55,7 +55,7 @@ class Nonogram(object):
         self.__max_color_length = 0
         for color in colors:
             self.__max_color_length = len(color) if len(color) > self.__max_color_length else self.__max_color_length
-        self.__can_be_colored = [[set(colors + ['-']) for _ in range(len(columns_info))]
+        self.__can_be_colored = [[(colors | {'-'}) for _ in range(len(columns_info))]
                                  for __ in range(len(lines_info))]
         self.__evaluated_line = []
         self.__evaluated_positions = []
@@ -280,7 +280,7 @@ def line_transformer(line, colors, counter):
     Функция, которая преобразует введенные данные в строку с информацией о блоках
 
     :param line: строка, линия с введенной информацией
-    :param colors: массив строк, цвета, используемые в нонограмме
+    :param colors: множество строк, цвета, используемые в нонограмме
     :param counter: словарь {цвет - количество}, для подсчета клеток каждого цвета в информации о строках/столбцах
     :return: массив пар (цвет, длина), информация о блоках для строки/столбца
     """
@@ -321,7 +321,7 @@ def file_reader(path_to_file):
             if not colors_filled:
                 if not line.startswith('colors: '):
                     raise NonoException('Incorrect input: no colors')
-                colors = line[8:].split()
+                colors = set(line[8:].split())
                 for color in colors:
                     colors_in_lines[color] = 0
                     colors_in_columns[color] = 0
